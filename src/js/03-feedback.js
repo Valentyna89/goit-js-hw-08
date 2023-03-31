@@ -1,57 +1,41 @@
 import throttle from 'lodash.throttle';
 
 const STORAGE_KEY = 'feedback-form-state';
+const form = document.querySelector('.feedback-form');
 
-const refs = {
-  form: document.querySelector('.feedback-form'),
-  input: document.querySelector('[type="email"]'),
-  textarea: document.querySelector('[name="message"]'),
-};
+form.addEventListener('input', throttle(onInputchange, 500));
+form.addEventListener('submit', onSubmitClick);
 
-refs.form.addEventListener('submit', e => {
-  e.preventDefault();
-  const data = {
-    email: refs.input.value,
-    message: refs.textarea.value,
+checkStorageContent();
+
+function onInputchange(e) {
+  const formData = {
+    email: form.email.value,
+    message: form.message.value,
   };
-  console.log(data);
+
+  const formDataJSON = JSON.stringify(formData);
+
+  localStorage.setItem(STORAGE_KEY, formDataJSON);
+}
+
+function onSubmitClick(e) {
+  e.preventDefault();
+  const formData = {
+    email: form.email.value,
+    message: form.message.value,
+  };
+  console.log(formData);
   e.target.reset();
   localStorage.removeItem(STORAGE_KEY);
-});
+}
 
-refs.textarea.addEventListener(
-  'input',
-  throttle(e => {
-    const data = {
-      email: refs.input.value,
-      message: e.target.value,
-    };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  }, 500)
-);
+function checkStorageContent() {
+  const storedData = localStorage.getItem(STORAGE_KEY);
 
-refs.input.addEventListener(
-  'input',
-  throttle(e => {
-    const data = {
-      email: e.target.value,
-      message: refs.textarea.value,
-    };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  }, 500)
-);
-
-const populateFields = () => {
-  const savedData = localStorage.getItem(STORAGE_KEY);
-  if (savedData) {
-    const { email, message } = JSON.parse(savedData);
-    if (email) {
-      refs.input.value = email;
-    }
-    if (message) {
-      refs.textarea.value = message;
-    }
+  if (storedData) {
+    const formData = JSON.parse(storedData);
+    form.email.value = formData.email;
+    form.message.value = formData.message;
   }
-};
-
-populateFields();
+}
