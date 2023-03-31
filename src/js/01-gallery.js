@@ -4,22 +4,26 @@ import { galleryItems } from './gallery-items';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
-console.log(galleryItems);
+import { createGallery } from './01-gallery.js';
 
-export const gallery = document.querySelector('.gallery');
+createGallery();
 
-export const imageList = galleryItems
-  .map(
-    ({ preview, original, description }) =>
-      `<a class="gallery__item" href="${original}">
+export function createGallery() {
+  const gallery = document.querySelector('.gallery');
+
+  const imageList = galleryItems
+    .map(
+      ({ preview, original, description }) =>
+        `<a class="gallery__item" href="${original}">
   <img class="gallery__image" src="${preview}" alt="${description}" />
 </a>`
-  )
-  .join('');
+    )
+    .join('');
 
-gallery.insertAdjacentHTML('afterbegin', imageList);
+  gallery.insertAdjacentHTML('afterbegin', imageList);
 
-let lightbox = new SimpleLightbox('.gallery a', {
-  captionDelay: 250,
-  captionsData: 'alt',
-});
+  let lightbox = new SimpleLightbox('.gallery a', {
+    captionDelay: 250,
+    captionsData: 'alt',
+  });
+}
