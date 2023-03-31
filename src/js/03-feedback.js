@@ -2,42 +2,56 @@ import throttle from 'lodash.throttle';
 
 const STORAGE_KEY = 'feedback-form-state';
 
-const formData = {};
-
 const refs = {
   form: document.querySelector('.feedback-form'),
-  input: document.querySelector('.feedback-form email'),
-  textarea: document.querySelector('.feedback-form textarea'),
+  input: document.querySelector('[type="email"]'),
+  textarea: document.querySelector('[name="message"]'),
 };
 
-refs.form.addEventListener('submit', onFormSubmit);
-refs.textarea.addEventListener('input', throttle(onTextareaInput, 500));
-
-// refs.form.addEventListener('input', e => {
-//   formData[e.target.email] = e.target.message;
-//   console.log(formData);
-// });
-
-populateTextarea();
-
-function onFormSubmit(e) {
+refs.form.addEventListener('submit', e => {
   e.preventDefault();
-
+  const data = {
+    message: refs.textarea.value,
+    email: refs.input.value,
+  };
+  console.log(data);
   e.target.reset();
   localStorage.removeItem(STORAGE_KEY);
-}
+});
 
-function onTextareaInput(e) {
-  const message = e.target.value;
+refs.textarea.addEventListener(
+  'input',
+  throttle(e => {
+    const data = {
+      message: e.target.value,
+      email: refs.input.value,
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }, 500)
+);
 
-  localStorage.setItem(STORAGE_KEY, message);
-}
+refs.input.addEventListener(
+  'input',
+  throttle(e => {
+    const data = {
+      message: refs.textarea.value,
+      email: e.target.value,
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }, 500)
+);
 
-function populateTextarea() {
-  const savedMessage = localStorage.getItem(STORAGE_KEY);
-
-  if (savedMessage) {
-    refs.textarea.value = savedMessage;
-    console.log(savedMessage);
+const populateFields = () => {
+  const savedData = localStorage.getItem(STORAGE_KEY);
+  if (savedData) {
+    const { message, email } = JSON.parse(savedData);
+    if (message) {
+      refs.textarea.value = message;
+    }
+    if (email) {
+      refs.input.value = email;
+    }
   }
-}
+};
+
+populateFields();
