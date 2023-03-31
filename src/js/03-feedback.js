@@ -11,8 +11,8 @@ const refs = {
 refs.form.addEventListener('submit', e => {
   e.preventDefault();
   const data = {
-    message: refs.textarea.value,
     email: refs.input.value,
+    message: refs.textarea.value,
   };
   console.log(data);
   e.target.reset();
@@ -23,8 +23,8 @@ refs.textarea.addEventListener(
   'input',
   throttle(e => {
     const data = {
-      message: e.target.value,
       email: refs.input.value,
+      message: e.target.value,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }, 500)
@@ -34,8 +34,8 @@ refs.input.addEventListener(
   'input',
   throttle(e => {
     const data = {
-      message: refs.textarea.value,
       email: e.target.value,
+      message: refs.textarea.value,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }, 500)
@@ -44,12 +44,12 @@ refs.input.addEventListener(
 const populateFields = () => {
   const savedData = localStorage.getItem(STORAGE_KEY);
   if (savedData) {
-    const { message, email } = JSON.parse(savedData);
-    if (message) {
-      refs.textarea.value = message;
-    }
+    const { email, message } = JSON.parse(savedData);
     if (email) {
       refs.input.value = email;
+    }
+    if (message) {
+      refs.textarea.value = message;
     }
   }
 };
