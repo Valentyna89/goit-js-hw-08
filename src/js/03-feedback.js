@@ -21,10 +21,17 @@ function onInputchange(e) {
 
 function onSubmitClick(e) {
   e.preventDefault();
+
   const formData = {
     email: form.email.value,
     message: form.message.value,
   };
+  
+  if (formData.email === '' || formData.message === '') {
+    alert('Enter email and message!');
+    return;
+  }
+
   console.log(formData);
   e.target.reset();
   localStorage.removeItem(STORAGE_KEY);
